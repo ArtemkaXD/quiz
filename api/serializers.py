@@ -104,7 +104,7 @@ class ReplySerializer(serializers.ModelSerializer):
     def validate(self, data):
         '''Проверка на соответсвие вопроса опросу и проверка на уникальность ответа на опрос'''
         for answer in data['answers']:
-            if answer['question'].quiz != data['quiz']:
+            if answer['question_id'].quiz != data['quiz']:
                 raise serializers.ValidationError("Wrong question id")
         try:
             Reply.objects.get(quiz=data['quiz'], user=data['user'])

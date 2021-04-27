@@ -50,11 +50,11 @@ class Question(models.Model):
 
 class Answer(models.Model):
     '''Модель ответа опроса'''
-    question = models.ForeignKey(Question, on_delete=models.CASCADE, null=True)
+    question_id = models.ForeignKey(Question, on_delete=models.CASCADE, null=True)
     answer = models.CharField(max_length=256)
 
     def __str__(self):
-        return f'{self.question.text}: {self.answer}'
+        return f'{self.question_id.text}: {self.answer}'
 
 
 class Reply(models.Model):

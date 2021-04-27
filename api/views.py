@@ -47,13 +47,13 @@ class QuizQuestionView(APIView):
         except Question.DoesNotExist:
             raise Http404
 
-    def get(self, request, pk):
+    def get(self, request, pk, q_pk = None):
         '''Получение воросов опроса'''
         questions = self.get_questions(pk)
         serializer = QuestionSerializer(questions, many=True)
         return Response(serializer.data)
 
-    def post(self, request, pk):
+    def post(self, request, pk, q_pk = None):
         '''Создание воросов опроса'''
         data = request.data.copy()
         for item in data:
@@ -64,18 +64,18 @@ class QuizQuestionView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def put(self, request, pk):
+    def put(self, request, pk, q_pk = None):
         '''Изменение вопроса опроса по идентификатору'''
-        question = self.get_question(pk, request.data['id'])
+        question = self.get_question(pk, q_pk)
         serializer = QuestionSerializer(question, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, pk):
+    def delete(self, request, pk, q_pk = None):
         '''Удаление вороса опроса по идентификатору'''
-        question = self.get_question(pk, request.data['id'])
+        question = self.get_question(pk, q_pk)
         question.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -121,10 +121,10 @@ class ActiveQuizQuestion(APIView):
 
 class ReplyQuiz(APIView):
     '''Контоллер ответа на опрос'''
-    def post(self, request, pk):
+    def post(self, request, pk, u_pk):
         '''Создание ответа на опрос'''
         data = request.data.copy()
-        data.update({'quiz': pk})
+        data.update({'quiz': pk, 'user': u_pk})
         serializer = ReplySerializer(data=data)
         if serializer.is_valid():
             serializer.save()
